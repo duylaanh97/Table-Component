@@ -1,5 +1,22 @@
 import { IGroup } from '@fluentui/react';
 
+export interface TableColumnProps {
+  key: string;
+  name: string;
+  fieldName: string;
+  minWidth?: number;
+  maxWidth?: number;
+
+  /**
+   * Hàm tùy chỉnh để render header cho cột này.
+   */
+  renderHeader?: () => JSX.Element;
+
+  /**
+   * Hàm tùy chỉnh để render row cho từng item trong cột này.
+   */
+  renderRow?: (item: any, index: number) => JSX.Element;
+}
 export interface TableProps {
   // ------------------- Dữ liệu và cấu trúc bảng -------------------
 
@@ -11,7 +28,7 @@ export interface TableProps {
   /**
    * Cấu trúc cột của bảng, bao gồm thông tin về tên cột, tên trường dữ liệu và kích thước.
    */
-  columns: any[];
+  columns: TableColumnProps[];
 
   /**
    * Dữ liệu nhóm cho bảng, nếu có nhóm các hàng theo nhóm.
@@ -53,16 +70,6 @@ export interface TableProps {
   // ------------------- Trạng thái phân trang và tìm kiếm -------------------
 
   /**
-   * Trang hiện tại của bảng.
-   */
-  currentPage: number;
-
-  /**
-   * Tổng số trang có thể hiển thị.
-   */
-  totalPages: number;
-
-  /**
    * Từ khóa tìm kiếm hiện tại.
    */
   searchTerm: string;
@@ -100,6 +107,9 @@ export interface TableProps {
    * Callback khi cột cần sắp xếp thay đổi. Nhận vào `columnKey` để biết cột nào đang sắp xếp.
    */
   onSort: (columnKey: string) => void;
+
+
+  itemsPerPage?: number; // Số lượng item mỗi trang (mặc định là 10)
 
   /**
    * Callback khi trang thay đổi. Nhận vào `page` là số trang mới.

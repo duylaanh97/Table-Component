@@ -1,16 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   DetailsList,
   DetailsRow,
   Icon,
-  IColumn,
   Panel,
   PanelType,
   SelectionMode,
   TextField,
   initializeIcons,
 } from '@fluentui/react';
-import { TableProps } from './tableProps';
+import { TableColumnProps, TableProps } from './tableProps';
 import './App.css'
 initializeIcons()
 
@@ -22,13 +21,14 @@ const Table: React.FC<TableProps> = ({
   sortable = true,
   searchable = true,
   searchPlaceholder = 'Tìm kiếm...',
-  currentPage,
-  totalPages,
+  // currentPage,
+  // totalPages,
   searchTerm,
   sortConfig,
   isFilterPanelOpen,
   panelHeader,
   searchTextFieldStyle,
+  itemsPerPage = 10,
 
   // Điều khiển icon Sort và Filter
   showSortIcon,
@@ -45,9 +45,28 @@ const Table: React.FC<TableProps> = ({
   // Nội dung bộ lọc
   filterContent = <p>Bạn có thể thêm tùy chọn lọc ở đây...</p>,
 }) => {
-  // Hàm render hàng với màu nền xen kẽ
+  const [currentPage, setCurrentPage] = useState(0); // Quản lý trang hiện tại
+
+  // Cắt item cho trang hiện tại
+  const paginatedItems = items.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
+  );
+
+  // Tổng số trang
+  const totalPages = Math.ceil(items.length / itemsPerPage);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    if (onPageChange) {
+      onPageChange(newPage);
+    }
+  };
+
+  // Sử dụng onRenderRow để tùy chỉnh style của toàn bộ row
   const onRenderRow = (props: any) => {
     if (props) {
+      // Áp dụng nền xen kẽ và border cho toàn bộ row
       const backgroundColor = props.itemIndex % 2 === 0 ? '#f9f9f9' : 'white';
       return <DetailsRow {...props} styles={{ root: { backgroundColor } }} />;
     }
@@ -83,10 +102,15 @@ const Table: React.FC<TableProps> = ({
     );
   };
 
-  // Tạo các cột với icon Sort và Filter mặc định
-  const columnsWithIcons: IColumn[] = columns.map((col: any) => ({
-    ...col,
-    onRenderHeader: () => (
+  // Chuyển đổi cấu trúc cột đơn giản thành cấu trúc IColumn của Fluent UI
+  const columnsWithCustomHeader: any = columns.map((col: TableColumnProps) => ({
+    key: col.key,
+    name: col.name,
+    fieldName: col.fieldName,
+    minWidth: col.minWidth,
+    maxWidth: col.maxWidth,
+    onRender: col.renderRow || undefined,
+    onRenderHeader: col.renderHeader || (() => (
       <div
         style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
         onClick={() => sortable && onSort && onSort(col.fieldName)}
@@ -129,7 +153,7 @@ const Table: React.FC<TableProps> = ({
           )}
         </div>
       </div>
-    ),
+    )),
   }));
 
   return (
@@ -142,15 +166,14 @@ const Table: React.FC<TableProps> = ({
             value={searchTerm}
             onChange={(e: any) => onSearchChange(e.target.value)}
             style={searchTextFieldStyle}
-            // style={{ width: '300px' }}
           />
         </div>
       )}
 
       <div className='table-container'>
         <DetailsList
-          items={items}
-          columns={columnsWithIcons}
+          items={paginatedItems}
+          columns={columnsWithCustomHeader}
           selectionMode={SelectionMode.none}
           onRenderRow={onRenderRow}
           groups={groupable ? groups : undefined}
@@ -169,20 +192,24 @@ const Table: React.FC<TableProps> = ({
         {filterContent}
       </Panel>
 
+      {/* Điều khiển phân trang */}
       <div className="pagination-container">
-        <button onClick={() => onPageChange(Math.max(currentPage - 1, 0))} disabled={currentPage === 0}>
-          Preview
+        <button onClick={() => handlePageChange(Math.max(currentPage - 1, 0))} disabled={currentPage === 0}>
+          Previous
         </button>
         {[...Array(totalPages)].map((_, index) => (
           <button
             key={index}
-            onClick={() => onPageChange(index)}
+            onClick={() => handlePageChange(index)}
             className={index === currentPage ? 'active' : ''}
           >
             {index + 1}
           </button>
         ))}
-        <button onClick={() => onPageChange(Math.min(currentPage + 1, totalPages - 1))} disabled={currentPage === totalPages - 1}>
+        <button
+          onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages - 1))}
+          disabled={currentPage === totalPages - 1}
+        >
           Next
         </button>
       </div>

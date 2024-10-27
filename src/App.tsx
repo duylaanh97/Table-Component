@@ -19,9 +19,7 @@ const App = () => {
   const [items, setItems] = useState(initialItems);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState<any>({ key: null, direction: 'asc' });
-  const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(items.length / itemsPerPage);
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
   const [groups, setGroups] = useState(initialGroups);
 
@@ -58,7 +56,7 @@ const App = () => {
 
   // Hàm xử lý chuyển trang
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    console.log('page :', page + 1);
   };
 
   // Hàm xử lý mở panel lọc
@@ -84,9 +82,22 @@ const App = () => {
 
   // Định nghĩa cột cho bảng
   const columns = [
-    { key: 'column1', name: 'Key', fieldName: 'key', minWidth: 100, maxWidth: 200 },
+    { 
+      key: 'column1', 
+      name: 'Key', 
+      fieldName: 'key', 
+      minWidth: 100, 
+      maxWidth: 200,
+      renderHeader: () => (
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
+          Key (Custom Header)
+        </div>
+      ),
+      renderRow: (item: any) => item.key
+    },
     { key: 'column2', name: 'Name', fieldName: 'name', minWidth: 100, maxWidth: 200 },
     { key: 'column3', name: 'Value', fieldName: 'value', minWidth: 100, maxWidth: 200 },
+    { key: 'column4', name: 'Duy', fieldName: 'value', minWidth: 100, maxWidth: 200 },
   ];
 
   return (
@@ -94,7 +105,7 @@ const App = () => {
       <h1>Table Component</h1>
 
       <Table
-        items={items.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage)}
+        items={items}
         columns={columns}
         groups={groups}
         groupable={false}
@@ -108,8 +119,6 @@ const App = () => {
         showSortIcon
         
         // State và giá trị khác
-        currentPage={currentPage}
-        totalPages={totalPages}
         searchTerm={searchTerm}
         sortConfig={sortConfig}
         isFilterPanelOpen={isFilterPanelOpen}
@@ -117,6 +126,7 @@ const App = () => {
         // Callback và xử lý sự kiện
         onSearchChange={handleSearchChange}
         onSort={handleSort}
+        itemsPerPage={itemsPerPage}
         onPageChange={handlePageChange}
         onToggleGroupCollapse={toggleGroupCollapse}
         onOpenFilterPanel={openFilterPanel}
