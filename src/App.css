@@ -36,3 +36,86 @@
     transform: rotate(360deg);
   }
 }
+
+#root {
+  padding: 0px 10px 0px 10px;
+}
+
+.table-container {
+  border: 1px solid #e0e0e0; /* Viền ngoài mờ */
+  border-radius: 4px;
+}
+
+.ms-DetailsList-cell {
+  border-bottom: 1px solid #e0e0e0; /* Đường kẻ giữa các hàng */
+}
+
+.ms-DetailsHeader-cell {
+  border-right: 1px solid #e0e0e0; /* Đường kẻ giữa các cột */
+  cursor: pointer; /* Thêm con trỏ chuột dạng pointer vào header */
+}
+
+/* Bỏ hover ở hàng */
+.ms-DetailsRow:hover {
+  background-color: transparent; /* Không thay đổi màu nền khi hover */
+}
+
+/* Bỏ hover ở header */
+.ms-DetailsHeader-cell:hover {
+  background-color: transparent; /* Không thay đổi màu nền khi hover */
+}
+
+.ms-DetailsRow-cell {
+  border-right: 1px solid #e0e0e0; /* Đường kẻ giữa các cột */
+}
+
+.ms-DetailsHeader-cell:last-child,
+.ms-DetailsRow-cell:last-child {
+  border-right: none; /* Bỏ viền cột cuối cùng */
+}
+
+/* CSS cho phân trang */
+.pagination-container {
+  display: flex;
+  justify-content: flex-end; /* Căn về bên phải */
+  margin-top: 10px;
+}
+
+.pagination-container button {
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  background-color: white;
+  cursor: pointer;
+}
+
+.pagination-container button.active {
+  background-color: #4CAF50;
+  border-color: #4CAF50;
+  color: white;
+}
+
+.pagination-container button:disabled {
+  background-color: #ddd;
+  border-color: #ddd;
+  cursor: not-allowed;
+}
+
+.pagination-container button:hover:not(.active):not(:disabled) {
+  background-color: #f1f1f1;
+}
+
+.ms-DetailsHeader {
+  padding: 0px !important;
+}
+
+.ms-DetailsHeader-cellTitle {
+  padding: 0px 8px 0px 8px !important;
+}
+
+.ms-DetailsHeader-cellName {
+  width: 100% !important;
+}
+
+.ms-FocusZone {
+  border-bottom: none !important;
+}
